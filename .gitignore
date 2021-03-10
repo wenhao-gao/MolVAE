@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Project
+checkpoint
+onhup.out
+*.txt
+*~
+models/__pycache__
+utils/__pycache__

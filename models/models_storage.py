@@ -1,4 +1,5 @@
 from models.smiles_vae import VAE, VAETrainer, vae_parser
+from models.jtvae.jtnn_vae import JTVAE, JTVAETrainer, jtvae_parser
 
 
 class ModelsStorage():
@@ -6,6 +7,7 @@ class ModelsStorage():
     def __init__(self):
         self._models = {}
         self.add_model('smiles_vae', VAE, VAETrainer, vae_parser)
+        self.add_model('jtvae', JTVAE, JTVAETrainer, jtvae_parser)
 
     def add_model(self, name, class_, trainer_, parser_):
         self._models[name] = {'class': class_,

@@ -101,7 +101,7 @@ def add_sample_args(parser):
                             type=int, default=100,
                             help="Max of length of SMILES")
     common_arg.add_argument('--data_path',
-                            type=str, default='~/shared/Data',
+                            type=str, default='/home/whgao/shared/Data',
                             help='Input data of TDC moses file')
     common_arg.add_argument('--data_seed',
                             type=str, default=42,

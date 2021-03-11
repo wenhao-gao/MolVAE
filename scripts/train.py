@@ -45,14 +45,18 @@ def main(model, config):
     # For CUDNN to work properly
     if device.type.startswith('cuda'):
         torch.cuda.set_device(device.index or 0)
-
-    data = MolGen(name = 'MOSES', path = config.data_path)
-    split = data.get_split(method = 'random', seed = config.data_seed, frac = [0.8, 0.0, 0.2])
-
-    train_data = split['train']['smiles'].tolist()
-    val_data = split['test']['smiles'].tolist()
-
+    
     trainer = MODELS.get_model_trainer(model)(config)
+
+    if config.processed_data is not None:
+        train_data = trainer.load_train_data()
+        val_data = trainer.load_val_data()
+    else:
+        data = MolGen(name = 'MOSES', path = config.data_path)
+        split = data.get_split(method = 'random', seed = config.data_seed, frac = [0.8, 0.0, 0.2])
+
+        train_data = split['train']['smiles'].tolist()
+        val_data = split['test']['smiles'].tolist()
 
     if config.vocab_load is not None:
         assert os.path.exists(config.vocab_load), \

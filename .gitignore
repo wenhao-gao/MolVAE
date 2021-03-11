@@ -130,7 +130,7 @@ dmypy.json
 
 # Project
 checkpoint
-onhup.out
+nohup.out
 *.txt
 *~
 models/__pycache__

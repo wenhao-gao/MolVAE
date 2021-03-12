@@ -13,10 +13,11 @@ class JTVAETrainer(Trainer):
         self.config = config
 
     def get_vocabulary(self, data):
-        vocab = [x.strip("\r\n ") for x in open(config.vocab)]
-        return Vocab(vocab)
+        vocab = [x.strip("\r\n ") for x in open(config.vocab_load)]
+        self.vocab = Vocab(vocab)
+        return self.vocab
 
-    def _train_epoch(self, model, epoch, tqdm_data, optimizer=None):
+    def _train_epoch(self, model, epoch, total_step, tqdm_data, optimizer=None):
 
         if optimizer is None:
             model.eval()
@@ -24,6 +25,9 @@ class JTVAETrainer(Trainer):
             model.train()
 
         for batch in tqdm_data:
+
+            total_step += 1
+
             try:
                 model.zero_grad()
                 loss, kl_div, wacc, tacc, sacc = model(batch, beta)
@@ -34,15 +38,26 @@ class JTVAETrainer(Trainer):
                 print(e)
                 continue
 
+            meters = meters + np.array([kl_div, wacc * 100, tacc * 100, sacc * 100])
+
+            postfix = [f'loss={loss:.3f}',
+                       f'kl={meters[0]:.2f}',
+                       f'Word={meters[1]:.2f}',
+                       f'Topo={meters[2]:.2f}',
+                       f'Word={meters[3]:.2f}']
+            tqdm_data.set_postfix_str(' '.join(postfix))
+            meters *= 0
+
         postfix = {
             'epoch': epoch,
+            'kl_weight': kl_weight,
             'lr': lr,
             'kl_loss': kl_loss_value,
             'recon_loss': recon_loss_value,
             'loss': loss_value,
-            'mode': 'Eval' if optimizer is None else 'Train'
+            'mode': 'Eval' if optimizer is None else 'Train'}
 
-        return postfix
+        return postfix, total_step
 
     def _train(self, model, train_loader, val_loader=None, logger=None):
         device = model.device
@@ -50,14 +65,16 @@ class JTVAETrainer(Trainer):
         optimizer = optim.Adam(model.parameters(), lr=config.lr)
         scheduler = lr_scheduler.ExponentialLR(optimizer, configs.anneal_rate)
 
-        param_norm = lambda m: math.sqrt(sum([p.norm().item() ** 2 for p in m.parameters()]))
-        grad_norm = lambda m: math.sqrt(sum([p.grad.norm().item() ** 2 for p in m.parameters() if p.grad is not None])
+        # param_norm = lambda m: math.sqrt(sum([p.norm().item() ** 2 for p in m.parameters()]))
+        # grad_norm = lambda m: math.sqrt(sum([p.grad.norm().item() ** 2 for p in m.parameters() if p.grad is not None])
 
         model.zero_grad()
+        total_step = 0
         for epoch in range(config.epoch):
+            loader = MolTreeFolder(args.train, self.vocab, args.batch_size, num_workers=4)
             tqdm_data = tqdm(train_loader,
                              desc='Training (epoch #{})'.format(epoch))
-            postfix = self._train_epoch(model, epoch,
+            postfix, total_step = self._train_epoch(model, epoch, total_step, 
                                         tqdm_data, kl_weight, optimizer)
             if logger is not None:
                 logger.append(postfix)
@@ -79,8 +96,11 @@ class JTVAETrainer(Trainer):
                            '_{0:03d}.pt'.format(epoch))
                 model = model.to(device)
 
-            # Epoch end
-            lr_annealer.step()
+            if epoch % config.anneal_iter == 0:
+                scheduler.step()
+
+            if epoch % config.kl_anneal_iter == 0 and epoch >= config.warmup:
+                beta = min(config.max_beta, beta + config.step_beta)
 
     def fit(self, model, train_data, val_data=None):
         for param in model.parameters():
@@ -89,11 +109,20 @@ class JTVAETrainer(Trainer):
             else:
                 nn.init.xavier_normal_(param)
 
-        if args.load_epoch > 0:
+        if config.load_epoch > 0:
             model.load_state_dict(torch.load(configs.save_dir + "/model.iter-" + str(configs.load_epoch)))
 
         print("Model #Params: %dK" % (sum([x.nelement() for x in model.parameters()]) / 1000,))
+        self._train(model, train_data, val_data)
+        return model
 
-        loader = MolTreeFolder(args.train, vocab, args.batch_size, num_workers=4)
+    def get_optim_params(self, model):
+        return (p for p in model.vae.parameters() if p.requires_grad)
+
+    def load_train_data(self):
+        return self.config.train
+
+    def load_val_data(self):
+        return None
 
 

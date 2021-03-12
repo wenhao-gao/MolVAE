@@ -6,7 +6,7 @@ from models.jtvae.jtnn_enc import JTNNEncoder
 from models.jtvae.jtnn_dec import JTNNDecoder
 from models.jtvae.mpn import MPN
 from models.jtvae.jtmpn import JTMPN
-from utils.data_utils import tensorize
+from utils.jtvae_data_utils import tensorize
 from utils.chem_utils import enum_assemble, set_atommap, copy_edit_mol, attach_mols
 from utils.nn_utils import create_var, flatten_tensor, avg_pool
 

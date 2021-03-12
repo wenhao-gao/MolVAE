@@ -1,5 +1,5 @@
 from models.smiles_vae import VAE, VAETrainer, vae_parser
-from models.jtvae.jtnn_vae import JTVAE, JTVAETrainer, jtvae_parser
+from models.jtvae import JTVAE, JTVAETrainer, jtvae_parser
 
 
 class ModelsStorage():

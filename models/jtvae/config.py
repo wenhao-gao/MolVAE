@@ -49,6 +49,9 @@ def get_parser(parser=None):
     model_arg.add_argument('--epoch',
                            type=int, default=20,
                            help='Initial learning rate')
+    model_arg.add_argument('--load_epoch',
+                           type=int, default=0,
+                           help='Load previous training epoches')
     model_arg.add_argument('--anneal_rate',
                            type=float, default=0.9,
                            help='Initial learning rate')

@@ -6,7 +6,7 @@ from torch.nn.utils import clip_grad_norm_
 
 from models.trainer import Trainer
 from models.smiles_vae.misc import CosineAnnealingLRWithRestart, KLAnnealer
-from utils.utils import OneHotVocab, Logger, CircularBuffer
+from utils.smiles_data_utils import OneHotVocab, Logger, CircularBuffer
 
 
 class VAETrainer(Trainer):
@@ -14,7 +14,13 @@ class VAETrainer(Trainer):
         self.config = config
 
     def get_vocabulary(self, data):
-        return OneHotVocab.from_data(data)
+        if self.config.vocab_load is not None:
+            assert os.path.exits(config.vocab_load), \
+                'vocab_load path does not exist!'
+            vocab = torch.load(self.config.vocab_load)
+        else:
+            vocab = OneHotVocab.from_data(data) 
+        return vocab
 
     def get_collate_fn(self, model):
         device = self.get_collate_device(model)

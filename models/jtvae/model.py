@@ -19,9 +19,14 @@ class JTNNVAE(nn.Module):
     The main model, used in train session with model(batch, beta)
     """
 
-    def __init__(self, vocab, hidden_size, latent_size, depthT, depthG):
+    def __init__(self, vocab, config):
         super(JTNNVAE, self).__init__()
         self.vocab = vocab
+        self.config = config
+        hidden_size = config.hidden_size
+        latent_size = config.latent_size
+        depthT = config.depthT
+        depthG= config.depthG
         self.hidden_size = hidden_size
         self.latent_size = latent_size = int(latent_size / 2) #Tree and Mol has two vectors
 
@@ -250,5 +255,9 @@ class JTNNVAE(nn.Module):
             if not has_error: return cur_mol, cur_mol
 
         return None, pre_mol
+
+    @property
+    def device(self):
+        return next(self.parameters()).device
 
 

@@ -48,7 +48,7 @@ def main(model, config):
     
     trainer = MODELS.get_model_trainer(model)(config)
 
-    if config.processed_data is not None:
+    if config.processed_data:
         train_data = trainer.load_train_data()
         val_data = trainer.load_val_data()
     else:
@@ -58,15 +58,10 @@ def main(model, config):
         train_data = split['train']['smiles'].tolist()
         val_data = split['test']['smiles'].tolist()
 
-    if config.vocab_load is not None:
-        assert os.path.exists(config.vocab_load), \
-            'vocab_load path does not exist!'
-        vocab = torch.load(config.vocab_load)
-    else:
-        vocab = trainer.get_vocabulary(train_data)
+    vocab = trainer.get_vocabulary(train_data)
 
-    if config.vocab_save is not None:
-        torch.save(vocab, config.vocab_save)
+    # if config.vocab_save is not None:
+    #     torch.save(vocab, config.vocab_save)
 
     model = MODELS.get_model_class(model)(vocab, config).to(device)
     trainer.fit(model, train_data, val_data)

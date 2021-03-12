@@ -46,6 +46,9 @@ def add_train_args(parser):
     # Common
     common_arg = parser.add_argument_group('Common')
     add_common_arg(common_arg)
+    common_arg.add_argument('--processed_data',
+                            action='store_true', default=False, 
+                            help='Input processed data for JTVAE')
     common_arg.add_argument('--data_path',
                             type=str, default='/home/whgao/shared/Data',
                             help='Input data of TDC moses file')

@@ -260,4 +260,10 @@ class JTNNVAE(nn.Module):
     def device(self):
         return next(self.parameters()).device
 
+    def sample(self, n_samples):
+        results = []
+        for i in range(n_samples):
+            results.append(self.sample_prior())
+        return results
+
 

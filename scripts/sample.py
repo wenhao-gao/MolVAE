@@ -43,9 +43,7 @@ def main(model, config):
     n = config.n_samples
     with tqdm(total=config.n_samples, desc='Generating samples') as T:
         while n > 0:
-            current_samples = model.sample(
-                min(n, config.n_batch), config.max_len
-            )
+            current_samples = model.sample(min(n, config.n_batch))
             samples.extend(current_samples)
 
             n -= len(current_samples)

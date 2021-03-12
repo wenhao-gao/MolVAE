@@ -22,6 +22,10 @@ class VAETrainer(Trainer):
             vocab = OneHotVocab.from_data(data) 
         return vocab
 
+    def save_vocabulary(self, vocab):
+        torch.save(vocab, self.config.vocab_save)
+        return None
+
     def get_collate_fn(self, model):
         device = self.get_collate_device(model)
 

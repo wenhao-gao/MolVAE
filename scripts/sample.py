@@ -5,7 +5,7 @@ import rdkit
 import pandas as pd
 from tqdm.auto import tqdm
 from models.models_storage import ModelsStorage
-from models.script_utils import add_sample_args, set_seed
+from utils.script_utils import add_sample_args, set_seed
 
 lg = rdkit.RDLogger.logger()
 lg.setLevel(rdkit.RDLogger.CRITICAL)

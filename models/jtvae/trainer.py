@@ -21,6 +21,10 @@ class JTVAETrainer(Trainer):
         self.vocab = Vocab(vocab)
         return self.vocab
 
+    def save_vocabulary(self, vocab):
+        torch.save(vocab, self.config.vocab_save)
+        return None
+
     def _train_epoch(self, model, epoch, total_step, tqdm_data, optimizer=None):
 
         if optimizer is None:
@@ -38,7 +42,7 @@ class JTVAETrainer(Trainer):
                 model.zero_grad()
                 loss, kl_div, wacc, tacc, sacc = model(batch, self.beta)
                 loss.backward()
-                loss_list.append(loss)
+                loss_list.append(loss.item())
                 nn.utils.clip_grad_norm_(model.parameters(), self.config.clip_norm)
                 optimizer.step()
             except Exception as e:

@@ -127,7 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
 # Project
 checkpoint
 nohup.out
@@ -136,3 +135,4 @@ nohup.out
 models/__pycache__
 utils/__pycache__
 data/*
+results

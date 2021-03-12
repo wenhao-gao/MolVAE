@@ -60,8 +60,8 @@ def main(model, config):
 
     vocab = trainer.get_vocabulary(train_data)
 
-    # if config.vocab_save is not None:
-    #     torch.save(vocab, config.vocab_save)
+    if config.vocab_save is not None:
+        trainer.save_vocabulary(vocab)
 
     model = MODELS.get_model_class(model)(vocab, config).to(device)
     trainer.fit(model, train_data, val_data)

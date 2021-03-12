@@ -4,6 +4,10 @@ from utils.smiles_data_utils import set_torch_seed_to_all_gens
 
 
 class Trainer(ABC):
+
+    def __init__(self):
+        raise NotImplementedError
+
     @property
     def n_workers(self):
         n_workers = self.config.n_workers
@@ -27,9 +31,12 @@ class Trainer(ABC):
 
     @abstractmethod
     def get_vocabulary(self, data):
-        pass
+        raise NotImplementedError
+
+    def save_vocabulary(self, vocab):
+        raise NotImplementedError
 
     @abstractmethod
     def fit(self, model, train_data, val_data=None):
-        pass
+        raise NotImplementedError
 

@@ -1,7 +1,8 @@
 import rdkit
 import rdkit.Chem as Chem
 from utils.chem_utils import get_clique_mol, tree_decomp, get_mol, get_smiles, set_atommap, enum_assemble, decode_stereo
-from models.jtvae.vocab import *
+from utils.vocab import *
+
 
 class MolTreeNode(object):
 
@@ -111,13 +112,20 @@ def dfs(node, fa_idx):
 
 
 if __name__ == "__main__":
-    import sys
+    import argparse
+    from tdc.generation import MolGen
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_path',
+                            type=str, default='/home/whgao/shared/Data',
+                            help='Input data of TDC moses file')
+    config = parser.parse_args()
     lg = rdkit.RDLogger.logger() 
     lg.setLevel(rdkit.RDLogger.CRITICAL)
 
+    data = MolGen(name = 'MOSES', path = config.data_path)
+    smiles_list = data.get_split(method = 'random', seed = 0, frac = [1.0, 0.0, 0.0])['train']['smiles'].tolist()
     cset = set()
-    for line in sys.stdin:
-        smiles = line.split()[0]
+    for smiles in smiles_list:
         mol = MolTree(smiles)
         for c in mol.nodes:
             cset.add(c.smiles)

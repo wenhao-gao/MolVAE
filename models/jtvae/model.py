@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from models.jtvae.mol_tree import Vocab, MolTree
+from models.jtvae.mol_tree import MolTree
 from models.jtvae.jtnn_enc import JTNNEncoder
 from models.jtvae.jtnn_dec import JTNNDecoder
 from models.jtvae.mpn import MPN
@@ -9,6 +9,7 @@ from models.jtvae.jtmpn import JTMPN
 from utils.jtvae_data_utils import tensorize
 from utils.chem_utils import enum_assemble, set_atommap, copy_edit_mol, attach_mols
 from utils.nn_utils import create_var, flatten_tensor, avg_pool
+from utils.vocab import Vocab
 
 import rdkit
 import rdkit.Chem as Chem

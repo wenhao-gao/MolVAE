@@ -8,8 +8,9 @@ from tqdm.auto import tqdm
 import numpy as np
 
 from models.trainer import Trainer
-from models.jtvae.mol_tree import Vocab, MolTree
+from models.jtvae.mol_tree import MolTree
 from utils.jtvae_data_utils import MolTreeFolder
+from utils.vocab import Vocab
 
 
 class JTVAETrainer(Trainer):

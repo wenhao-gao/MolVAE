@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from models.jtvae.mol_tree import Vocab, MolTree, MolTreeNode
+from models.jtvae.mol_tree import MolTree, MolTreeNode
 from utils.nn_utils import create_var, GRU
 from utils.chem_utils import enum_assemble, set_atommap
+from utils.vocab import Vocab
 import copy
 
 MAX_NB = 15

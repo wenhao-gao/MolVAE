@@ -2,8 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import deque
-from models.jtvae.mol_tree import Vocab, MolTree
+from models.jtvae.mol_tree import MolTree
 from utils.nn_utils import create_var, index_select_ND
+from utils.vocab import Vocab
+
 
 class JTNNEncoder(nn.Module):
     """

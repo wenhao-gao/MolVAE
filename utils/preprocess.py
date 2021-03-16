@@ -5,6 +5,7 @@ from multiprocessing import Pool
 import math, random, sys
 from optparse import OptionParser
 import pickle
+from tqdm import tqdm
 
 from models.jtvae.mol_tree import MolTree
 import rdkit
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     lg.setLevel(rdkit.RDLogger.CRITICAL)
 
     parser = OptionParser()
-    parser.add_option("-t", "--train", dest="train_path")
+    parser.add_option("-t", "--data_path", dest="train_path")
     parser.add_option("-n", "--split", dest="nsplits", default=10)
     parser.add_option("-j", "--jobs", dest="njobs", default=8)
     opts,args = parser.parse_args()
@@ -41,11 +42,13 @@ if __name__ == "__main__":
     with open(opts.train_path) as f:
         data = [line.strip("\r\n ").split()[0] for line in f]
 
+    data = 
+
     all_data = pool.map(tensorize, data)
 
     le = int((len(all_data) + num_splits - 1) / num_splits)
 
-    for split_id in range(num_splits):
+    for split_id in tqdm(range(num_splits)):
         st = split_id * le
         sub_data = all_data[st : st + le]
 
